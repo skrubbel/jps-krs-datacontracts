@@ -1,0 +1,10 @@
+CREATE OR REPLACE TABLE {{ table.catalog_name }}.{{ table.schema_name }}.{{ table.table_name }} (
+{% for col in table.columns %}
+{{ col.column_name }} {{ col.target_data_type }} {%- if col.is_nullable %} NULL{% else %} NOT NULL{% endif %} comment '{{ col.description|replace("'", "''") }}'{% if not loop.last %},{% endif %}  
+{% endfor %}
+)
+
+TBLPROPERTIES (  
+  delta.autoOptimize.optimizeWrite = true,  
+  delta.autoOptimize.autoCompact = true  
+);

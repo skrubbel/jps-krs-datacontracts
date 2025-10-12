@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=./json_schemas/data-table-contract.schema.json
+contract_type: "datatable_contract"
+validation_schema_version: "1.0"
+lifecycle_status: active
+
+table:
+  catalog_name: "dc_demo_service"
+  schema_name: "hr"
+  table_name: "employee"
+  materialization_type: table
+  description: "Contains employee master data"
+  discovery_tags:
+    - "employee"
+    - "masterdata"
+  partition_by:
+    - "created_year"
+  change_track_columns:
+    - "last_name"
+  columns:
+    - column_name: "id"
+      data_type: integer
+      description: "Unique identifier for the employee."
+      is_nullable: false
+      is_primary_key: true
+      is_business_key: true
+
+    - column_name: "first_name"
+      data_type: string
+      description: "Employee first name"
+      is_nullable: false
+
+    - column_name: "last_name"
+      data_type: string
+      description: "Employee last name"
+      is_nullable: false
+
+    - column_name: "birth_date"
+      data_type: date
+      description: "Date of birth for employee."
+      is_nullable: false
+
+    - column_name: "personal_phone"
+      data_type: string
+      description: "Employee personal phone number"
+      is_nullable: false
+      sensitivity_level: confidential
+      sensitivity_type: pii
+
+    - column_name: "personal_email"
+      data_type: string
+      description: "Employee personal email."
+      is_nullable: false
+      is_business_key: true
+      sensitivity_level: confidential
+      sensitivity_type: pii
+
+    - column_name: "work_phone"
+      data_type: string
+      description: "Employee work phone number"
+      is_nullable: false
+      sensitivity_level: restricted
+      sensitivity_type: pii
+
+    - column_name: "work_email"
+      data_type: string
+      description: "Employee personal email."
+      is_nullable: false
+      is_business_key: true
+      sensitivity_level: restricted
+      sensitivity_type: pii
+
+    - column_name: "created_at"
+      data_type: timestamp
+      description: "Timestamp when the employee record was created."
+      is_nullable: false
+
+    - column_name: "created_year"
+      data_type: integer
+      description: "Year the employee record was created."
+      is_nullable: false

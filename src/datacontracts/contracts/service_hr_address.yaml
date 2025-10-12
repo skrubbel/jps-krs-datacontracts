@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=./json_schemas/data-table-contract.schema.json
+contract_type: "datatable_contract"
+validation_schema_version: "1.0"
+lifecycle_status: active
+
+table:
+  catalog_name: "dc_demo_service"
+  schema_name: "hr"
+  table_name: "address"
+  materialization_type: table
+  description: "Contains address master data"
+  discovery_tags:
+    - "employee"
+    - "masterdata"
+  partition_by:
+    - "created_year"
+  change_track_columns:
+    - "address_name"
+  columns:
+    - column_name: "id"
+      data_type: integer
+      description: "Unique identifier for the address"
+      is_nullable: false
+      is_primary_key: true
+      is_business_key: true
+
+    - column_name: "name"
+      data_type: string
+      description: "Address name"
+      is_nullable: false
+
+    - column_name: "street_name"
+      data_type: string
+      description: "Address street name"
+      is_nullable: false
+
+    - column_name: "house_number"
+      data_type: string
+      description: "House number"
+      is_nullable: false
+
+    - column_name: "city"
+      data_type: string
+      description: "City name"
+      is_nullable: false
+
+    - column_name: "post_code"
+      data_type: string
+      description: "Post code"
+      is_nullable: false
+
+    - column_name: "country_code"
+      data_type: string
+      description: "Country code"
+      is_nullable: false
+
+    - column_name: "country_name"
+      data_type: string
+      description: "Country name"
+      is_nullable: false
+
+    - column_name: "created_at"
+      data_type: timestamp
+      description: "Timestamp when the address record was created."
+      is_nullable: false
+
+    - column_name: "created_year"
+      data_type: integer
+      description: "Year the address record was created."
+      is_nullable: false

@@ -1,0 +1,68 @@
+---
+title: Data Table Contract
+date:
+  created: 2025-06-29
+authors:
+  - thetailor
+categories:
+  - Programming
+---
+
+## Contract details
+
+**Contract Type**: {{ contract_type }}  
+**Validation Schema Version**: {{ validation_schema_version }}  
+**Lifecycle Status**: {{ lifecycle_status }}  
+
+### Table: {{ table.table_name }}  
+
+**Table Name**: {{ table.table_name }}  
+**Schema Name**: {{ table.schema_name }}  
+**Catalog Name**: {{ table.catalog_name }}  
+**Description**: {{ table.description }}  
+
+**Discovery Tags**: {{ table.discovery_tags_string }}
+
+#### Sensitive Columns
+
+{% if table.has_sensitive_data %}
+{%- for column in table.sensitive_columns %}
+- {{ column }}  
+{% endfor %}
+{% endif %}
+
+#### Column overview
+
+{%- set cols = ['column_name', 'data_type', 'is_primary_key', 'is_business_key', 'is_nullable', 'sensitivity_type'] %}
+{%- set widths = {} %}
+{%- for col in cols %}
+    {%- set max_len = [col|length] %}
+    {%- for c in table.columns %}
+        {%- set val = c.get(col, '') %}
+        {%- set max_len = max_len + [val|string|length] %}
+    {%- endfor %}
+    {%- set _ = widths.update({col: max_len|max }) %}
+{%- endfor %}
+
+{# Header #}
+|{% for col in cols -%} {{ col.ljust(widths[col]) }} |{% endfor %}
+|{% for col in cols -%} {{ '-' * widths[col] }} |{% endfor %}
+{# Rows #}
+{%- for c in table.columns %}
+| {% for col in cols -%} {{ (c.get(col, '')|string).ljust(widths[col]) }} |{% endfor %}
+{% endfor %}
+
+#### Column details
+
+{% for column in table.columns %}
+**Column Name**: {{column.column_name }}  
+**Data Type**: {{ column.data_type }}  
+**Description**: {{ column.description }}  
+**Is Primary Key**: {{ column.is_primary_key }}  
+**Is Business Key**: {{ column.is_business_key }}  
+**Is Nullable**: {{ column.is_nullable }}  
+**Is Id Column**: {{ column.is_id }}  
+**Sensitivity Level**: {{ column.sensitivity_level }}  
+**Sensitivity Type**:  {{ column.sensitivity_type }}  
+
+{% endfor %}

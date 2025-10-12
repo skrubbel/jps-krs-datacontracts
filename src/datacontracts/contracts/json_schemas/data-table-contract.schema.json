@@ -1,0 +1,326 @@
+{
+  "$defs": {
+    "Column": {
+      "description": "Represents a column schema in a data contract.",
+      "properties": {
+        "column_name": {
+          "description": "Column name",
+          "title": "Column Name",
+          "type": "string"
+        },
+        "data_type": {
+          "$ref": "#/$defs/DataType",
+          "description": "Data type of the column"
+        },
+        "numeric_scale": {
+          "anyOf": [
+            {
+              "maximum": 38,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric scale value for decimals",
+          "title": "Numeric Scale"
+        },
+        "numeric_precision": {
+          "anyOf": [
+            {
+              "maximum": 38,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric precision value for decimals",
+          "title": "Numeric Precision"
+        },
+        "description": {
+          "description": "Description of the column",
+          "title": "Description",
+          "type": "string"
+        },
+        "is_nullable": {
+          "description": "Is the column nullable?",
+          "title": "Is Nullable",
+          "type": "boolean"
+        },
+        "is_id": {
+          "default": false,
+          "description": "Is this an identity column",
+          "title": "Is Id",
+          "type": "boolean"
+        },
+        "is_primary_key": {
+          "default": false,
+          "description": "Is the column a primary key?",
+          "title": "Is Primary Key",
+          "type": "boolean"
+        },
+        "is_business_key": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Is this column a business key",
+          "title": "Is Business Key"
+        },
+        "is_foreign_key": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Is this a foreign key column",
+          "title": "Is Foreign Key"
+        },
+        "sensitivity_level": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SensitivityLevel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data sensitivity classification"
+        },
+        "sensitivity_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SensitivityType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of sensitive data contained in the column"
+        }
+      },
+      "required": [
+        "column_name",
+        "data_type",
+        "description",
+        "is_nullable"
+      ],
+      "title": "Column",
+      "type": "object"
+    },
+    "ContractType": {
+      "description": "Enum representing types of data contracts",
+      "enum": [
+        "datatable_contract",
+        "dataset_contract"
+      ],
+      "title": "ContractType",
+      "type": "string"
+    },
+    "DataType": {
+      "description": "Enum representing possible data types for a column in a data table contract.",
+      "enum": [
+        "string",
+        "integer",
+        "long",
+        "double",
+        "boolean",
+        "timestamp",
+        "date",
+        "float",
+        "decimal"
+      ],
+      "title": "DataType",
+      "type": "string"
+    },
+    "LifecycleStatus": {
+      "enum": [
+        "experimental",
+        "active",
+        "deprecated",
+        "expired"
+      ],
+      "title": "LifecycleStatus",
+      "type": "string"
+    },
+    "MaterializationType": {
+      "description": "Enum representing materilazation type of table type objects",
+      "enum": [
+        "table",
+        "view"
+      ],
+      "title": "MaterializationType",
+      "type": "string"
+    },
+    "SensitivityLevel": {
+      "description": "Enum representing data sensitivity levels.",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "regulated"
+      ],
+      "title": "SensitivityLevel",
+      "type": "string"
+    },
+    "SensitivityType": {
+      "description": "Enum representing types of sensitive data.",
+      "enum": [
+        "pii",
+        "phi",
+        "ppi",
+        "financial",
+        "price",
+        "strategic",
+        "intellectual_property",
+        "credentials"
+      ],
+      "title": "SensitivityType",
+      "type": "string"
+    },
+    "Table": {
+      "description": "Represents a table schema in a data contract.",
+      "properties": {
+        "catalog_name": {
+          "description": "Catalog name",
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "description": "Schema name",
+          "title": "Schema Name",
+          "type": "string"
+        },
+        "table_name": {
+          "description": "Table name",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "materialization_type": {
+          "$ref": "#/$defs/MaterializationType",
+          "description": "Materialization Type"
+        },
+        "description": {
+          "description": "Table description",
+          "title": "Description",
+          "type": "string"
+        },
+        "discovery_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search tags for table discovery",
+          "title": "Discovery Tags"
+        },
+        "columns": {
+          "description": "List of columns in the table",
+          "items": {
+            "$ref": "#/$defs/Column"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "partition_by": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Columns to partition the table by",
+          "title": "Partition By"
+        },
+        "change_track_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Columns to track for SCD changes",
+          "title": "Change Track Columns"
+        }
+      },
+      "required": [
+        "catalog_name",
+        "schema_name",
+        "table_name",
+        "materialization_type",
+        "description",
+        "columns"
+      ],
+      "title": "Table",
+      "type": "object"
+    }
+  },
+  "description": "Data table contract schema.",
+  "properties": {
+    "contract_type": {
+      "$ref": "#/$defs/ContractType",
+      "default": "datatable_contract",
+      "description": "The contract type"
+    },
+    "validation_schema_version": {
+      "default": "1.0",
+      "description": "Schema version of the contract for compatability checking",
+      "title": "Validation Schema Version",
+      "type": "string"
+    },
+    "lifecycle_status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LifecycleStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": ""
+    },
+    "table": {
+      "$ref": "#/$defs/Table"
+    }
+  },
+  "required": [
+    "table"
+  ],
+  "title": "DataTableContract",
+  "type": "object"
+}

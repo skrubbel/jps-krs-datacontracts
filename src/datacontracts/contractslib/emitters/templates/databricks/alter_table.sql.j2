@@ -1,0 +1,17 @@
+{%- set fq_table = table.catalog_name ~ '.' ~ table.schema_name ~ '.' ~ table.table_name -%}
+
+{# Table-level discovery_tag: all tags in one SET TAGS statement #}
+{%- if table.discovery_tags %}
+ALTER TABLE {{ fq_table }} SET TAGS (
+    {%- for tag in table.discovery_tags %}
+    'discoverability' = '{{ tag }}'{% if not loop.last %}, {% endif %}
+    {%- endfor %}
+);
+{%- endif %}
+
+{# Column-level sensitivity_type: skip if value is not present or is 'None' (as string or NoneType) #}
+{%- for col in table.columns %}
+    {%- if col.sensitivity_type is defined and col.sensitivity_type and col.sensitivity_type != 'None' %}
+ALTER TABLE {{ fq_table }} ALTER COLUMN {{ col.column_name }} SET TAGS ('sensitivity' = '{{ col.sensitivity_type }}');
+    {%- endif %}
+{%- endfor %}
