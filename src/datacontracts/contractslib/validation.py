@@ -1,3 +1,5 @@
+"""_summary_"""
+
 from functools import reduce
 from operator import or_
 
@@ -34,4 +36,5 @@ def validate_dataframe_min_max(df: DataFrame, contract: DataTableContract) -> Da
     # Combine conditions with OR logic
     combined_condition = reduce(or_, violation_conditions)
     invalid_rows = df.filter(combined_condition)
+
     return invalid_rows
