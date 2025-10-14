@@ -6,9 +6,15 @@ from pydantic import (
     Field,
     computed_field,
     model_validator,
+    model_serializer,
 )
 
-from .option_types import DataType, MaterializationType, SensitivityLevel, SensitivityType
+from .option_types import (
+    DataType,
+    MaterializationType,
+    SensitivityLevel,
+    SensitivityType,
+)
 
 
 # Section: Data Contract Component Classes
@@ -28,13 +34,23 @@ class Column(BaseModel):
     numeric_precision: Optional[int] = Field(
         None, description="Numeric precision value for decimals", le=38
     )
-    min_value: Optional[int] = Field(None, description="Minimum value of column content")
-    max_value: Optional[int] = Field(None, description="Maximum value of column content")
+    min_value: Optional[int] = Field(
+        None, description="Minimum value of column content"
+    )
+    max_value: Optional[int] = Field(
+        None, description="Maximum value of column content"
+    )
     description: Optional[str] = Field(None, description="Description of the column")
     is_id: Optional[bool] = Field(None, description="Is this an identity column")
-    is_primary_key: Optional[bool] = Field(None, description="Is the column a primary key?")
-    is_business_key: Optional[bool] = Field(None, description="Is this column a business key")
-    is_foreign_key: Optional[bool] = Field(None, description="Is this a foreign key column")
+    is_primary_key: Optional[bool] = Field(
+        None, description="Is the column a primary key?"
+    )
+    is_business_key: Optional[bool] = Field(
+        None, description="Is this column a business key"
+    )
+    is_foreign_key: Optional[bool] = Field(
+        None, description="Is this a foreign key column"
+    )
     sensitivity_level: Optional[SensitivityLevel] = Field(
         None, description="Data sensitivity classification"
     )
@@ -42,6 +58,7 @@ class Column(BaseModel):
         None, description="Type of sensitive data contained in the column"
     )
 
+    # Validate Primary Key columns are not nullable
     @model_validator(mode="after")
     def ensure_primary_key_not_nullable(self) -> "Column":
         """Ensure primary keys are not nullable by automatically setting is_nullable to False."""
@@ -50,6 +67,7 @@ class Column(BaseModel):
             object.__setattr__(self, "is_nullable", False)
         return self
 
+    # Validate decimal precision and scale values
     @model_validator(mode="after")
     def validate_decimal_fields(self):
         """Ensure correct scale and precision values for decimal types"""
@@ -63,6 +81,34 @@ class Column(BaseModel):
                     "numeric_scale must be less than or equal to numeric_precision for decimal columns."
                 )
         return self
+
+    # Validate min - max range
+    @model_validator(mode="after")
+    def validate_min_max(self):
+        if self.min_value and self.max_value:
+            if self.max_value < self.min_value:
+                raise ValueError("max_value must be larger than or equal to min_value!")
+        return self
+
+    @model_serializer
+    def serialize_model(self):
+        """Control serialization order."""
+        return {
+            "column_name": self.column_name,
+            "data_type": self.data_type,
+            "is_nullable": self.is_nullable,
+            "numeric_scale": self.numeric_scale,
+            "numeric_precision": self.numeric_precision,
+            "min_value": self.min_value,
+            "max_value": self.max_value,
+            "description": self.description,
+            "is_id": self.is_id,
+            "is_primary_key": self.is_primary_key,
+            "is_business_key": self.is_business_key,
+            "is_foreign_key": self.is_foreign_key,
+            "sensitivity_level": self.sensitivity_level,
+            "sensitivity_type": self.sensitivity_type,
+        }
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -85,9 +131,13 @@ class Table(BaseModel):
         None, description="Materialization Type"
     )
     description: Optional[str] = Field(None, description="Table description")
-    discovery_tags: Optional[List[str]] = Field(None, description="Search tags for table discovery")
+    discovery_tags: Optional[List[str]] = Field(
+        None, description="Search tags for table discovery"
+    )
 
-    partition_by: Optional[List[str]] = Field(None, description="Columns to partition the table by")
+    partition_by: Optional[List[str]] = Field(
+        None, description="Columns to partition the table by"
+    )
     change_track_columns: Optional[List[str]] = Field(
         None, description="Columns to track for SCD changes"
     )
@@ -101,7 +151,9 @@ class Table(BaseModel):
     @property
     def sensitive_columns(self) -> List[str]:
         return [
-            column.column_name for column in self.columns if column.sensitivity_type is not None
+            column.column_name
+            for column in self.columns
+            if column.sensitivity_type is not None
         ]
 
     @computed_field(description="Discovery tags as a comma separated string")
@@ -110,16 +162,26 @@ class Table(BaseModel):
         if self.discovery_tags:
             return ", ".join(self.discovery_tags)
 
+    @model_serializer
+    def serialize_model(self):
+        """Control serialization order."""
+        return {
+            "catalog_name": self.catalog_name,
+            "schema_name": self.schema_name,
+            "table_name": self.table_name,
+            "description": self.description,
+            "materialization_type": self.materialization_type,
+            "discovery_tags": self.discovery_tags,
+            "discovery_tags_string": self.discovery_tags_string,
+            "partition_by": self.partition_by,
+            "change_track_columns": self.change_track_columns,
+            "has_sensitive_data": self.has_sensitive_data,
+            "sensitive_columns": self.sensitive_columns,
+            "columns": [col.model_dump() for col in self.columns],
+        }
+
     model_config = ConfigDict(
         validate_by_name=True,
         validate_by_alias=True,
         use_enum_values=True,
-        model_fields_set_order=[
-            "catalog_name",
-            "schema_name",
-            "table_name",
-            "description",
-            "tags",
-            # ... other fields in desired order
-        ],
     )

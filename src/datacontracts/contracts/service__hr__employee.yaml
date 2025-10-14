@@ -69,6 +69,15 @@ table:
       sensitivity_level: restricted
       sensitivity_type: pii
 
+    - column_name: "age"
+      data_type: integer
+      description: "Age of employee"
+      is_nullable: true
+      min_value: 10
+      max_value: 120
+      sensitivity_level: restricted
+      sensitivity_type: pii
+
     - column_name: "created_at"
       data_type: timestamp
       description: "Timestamp when the employee record was created."
