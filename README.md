@@ -1,6 +1,9 @@
 # datacontracts
 
-[TOC]
+- [datacontracts](#datacontracts)
+  - [Usefull pipenv commands](#usefull-pipenv-commands)
+  - [Usefull uv and ruff commands](#usefull-uv-and-ruff-commands)
+  - [Project structure](#project-structure)
 
 A library for implementing and validating data contract content.
 
@@ -28,6 +31,9 @@ pipenv run black src/
 
 # Sort imports
 pipenv run isort src/
+
+# Type check (Personally I would like to do this more, but...)
+pipenv run mypy src/
 ```
 
 ## Usefull uv and ruff commands
@@ -37,7 +43,7 @@ pipenv run isort src/
 ruff check --select I --fix
 
 # Running the demos in the tools folder (module)
-uv run -m src/examples/demo_load_and_emit.py
+uv run examples/demo_load_and_emit.py
 ```
 
 ## Project structure
@@ -45,45 +51,53 @@ uv run -m src/examples/demo_load_and_emit.py
 ``` bash
 .
 ├── docs
-├── examples
-│   └── demo_load_and_emit.py
+├───examples
+│   └───contracts
+│       ├───json_schemas
+│       └───yaml
+├── examples  # FOR DEMO PURPOSES: Runnable examples
+│   └───contracts
+│   │    ├───json_schemas
+│   │    └───yaml
+│   │
+    └── demo_load_and_emit.py
 ├── Pipfile
 ├── Pipfile.lock
 ├── pyproject.toml
-├── README.md
+├── README.md  # You're already here - thank you for reading :-)
 └── src
     └── datacontracts
-        ├── contracts
-        │   ├── json_schemas
+        ├── contracts  # Contract implementations are placed here (can live elsewhere)
+        │   ├── json_schemas  # Schemas for validating yaml and providing intellisense
         │   │   └── data-table-contract.schema.json
-        │   └── yaml
-        │       ├── service_hr_address.yaml
-        │       └── service__hr__employee.yaml
+        │   └── yaml  # Contains the contracts in yaml format
+        │       ├── service_hr_address.yaml  # Contract example
+        │       └── service__hr__employee.yaml  # Contract example
         ├── contractslib
         │   ├── emitters
-        │   │   ├── databricks_sql_emitter.py
         │   │   ├── __init__.py
-        │   │   ├── json_emitter.py
-        │   │   ├── markdown_docs_emitter.py
-        │   │   ├── spark_structtype_emitter.py
-        │   │   ├── templates
-        │   │   │   ├── databricks
+        │   │   ├── databricks_sql_emitter.py  # Methods to emit Databricks SQL (Create/Modify table)
+        │   │   ├── json_emitter.py  # Methods to emit Data Contract as json and json Schema
+        │   │   ├── markdown_docs_emitter.py  # Methods to emit Data Contracts as markdown
+        │   │   ├── spark_structtype_emitter.py  # Methods to emit Data Contracts as Spark StructType
+        │   │   ├── templates  # Jinja2 templates to emit Data Contract artifacts
+        │   │   │   ├── databricks  # Databricks specific implementations
         │   │   │   │   ├── alter_table.sql.j2
         │   │   │   │   └── create_table.sql.j2
-        │   │   │   └── docs
+        │   │   │   └── docs  # Documentation templates for Data Contracts
         │   │   │       └── datatable_contract_docs.md.j2
-        │   │   └── yaml_emitter.py
+        │   │   └── yaml_emitter.py  # Methods to emit Data Contracts as yaml
         │   ├── __init__.py
-        │   ├── loaders
+        │   ├── loaders  # Methods to load and instantiate DataContract objects
         │   │   ├── __init__.py
-        │   │   ├── structtype_loader.py
-        │   │   └── yaml_loader.py
-        │   ├── models
-        │   │   ├── base.py
-        │   │   ├── datatable.py
+        │   │   ├── structtype_loader.py  # Methods to instantiate from Spark StructType
+        │   │   └── yaml_loader.py  # Methods to instantiate from yaml
+        │   ├── models  # Pydantic models and model components e.g. enums
         │   │   ├── __init__.py
-        │   │   └── option_types.py
-        │   ├── type_converter.py
-        │   └── validation.py
+        │   │   ├── base.py  # Pydantic Contract components
+        │   │   ├── datatable.py  # Pydantic DataTableContract models
+        │   │   └── option_types.py  # Enums
+        │   ├── type_converter.py  # Type conversions
+        │   └── validation.py  # Validation rule implementations (data)
         └── __init__.py
 ```
