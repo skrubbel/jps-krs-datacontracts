@@ -51,53 +51,43 @@ uv run examples/demo_load_and_emit.py
 ``` bash
 .
 ├── docs
-├───examples
-│   └───contracts
-│       ├───json_schemas
-│       └───yaml
 ├── examples  # FOR DEMO PURPOSES: Runnable examples
-│   └───contracts
-│   │    ├───json_schemas
-│   │    └───yaml
-│   │
-    └── demo_load_and_emit.py
+│   ├── contracts  # Contract implementations are placed here (can live elsewhere)
+│   │   ├── json_schemas  # Schemas for validating yaml and providing intellisense
+│   │   │   └── data-table-contract.schema.json
+│   │   └── yaml  # Contains the contracts in yaml format
+│   │       ├── service_hr_address.yaml  # Contract example
+│   │       └── service__hr__employee.yaml  # Contract example
+│   └── demo_load_and_emit.py  # Examples of library functionality
+├── src
+│   └── datacontracts
+│       ├── emitters
+│       │   ├── templates  # Jinja2 templates to emit Data Contract artifacts
+│       │   │   ├── databricks
+│       │   │   │   ├── alter_table.sql.j2
+│       │   │   │   └── create_table.sql.j2
+│       │   │   └── docs  # Documentation templates for Data Contracts
+│       │   │       └── datatable_contract_docs.md.j2
+│       │   ├── __init__.py
+│       │   ├── databricks_sql_emitter.py  # Methods to emit Databricks SQL (Create/Modify) 
+│       │   ├── json_emitter.py  # Methods to emit Data Contract as json and json Schema
+│       │   ├── markdown_docs_emitter.py  # Methods to emit Data Contracts as markdown
+│       │   ├── spark_structtype_emitter.py  # Methods to emit Data Contracts as Spark 
+│       │   └── yaml_emitter.py  # Methods to emit Data Contracts as yaml
+│       ├── loaders   # Methods to load and instantiate DataContract objects
+│       │   ├── __init__.py
+│       │   ├── structtype_loader.py  # Methods to instantiate from Spark StructType
+│       │   └── yaml_loader.py  # Methods to instantiate from yaml
+│       ├── models  # Pydantic models and model components e.g. enums
+│       │   ├── __init__.py
+│       │   ├── base.py  # Pydantic Contract components
+│       │   ├── datatable.py  # Pydantic DataTableContract models
+│       │   └── option_types.py  # Enums
+│       ├── __init__.py
+│       ├── type_converter.py  # Type conversions
+│       └── validation.py  # Validation rule implementations (data)
 ├── Pipfile
 ├── Pipfile.lock
 ├── pyproject.toml
-├── README.md  # You're already here - thank you for reading :-)
-└── src
-    └── datacontracts
-        ├── contracts  # Contract implementations are placed here (can live elsewhere)
-        │   ├── json_schemas  # Schemas for validating yaml and providing intellisense
-        │   │   └── data-table-contract.schema.json
-        │   └── yaml  # Contains the contracts in yaml format
-        │       ├── service_hr_address.yaml  # Contract example
-        │       └── service__hr__employee.yaml  # Contract example
-        ├── contractslib
-        │   ├── emitters
-        │   │   ├── __init__.py
-        │   │   ├── databricks_sql_emitter.py  # Methods to emit Databricks SQL (Create/Modify table)
-        │   │   ├── json_emitter.py  # Methods to emit Data Contract as json and json Schema
-        │   │   ├── markdown_docs_emitter.py  # Methods to emit Data Contracts as markdown
-        │   │   ├── spark_structtype_emitter.py  # Methods to emit Data Contracts as Spark StructType
-        │   │   ├── templates  # Jinja2 templates to emit Data Contract artifacts
-        │   │   │   ├── databricks  # Databricks specific implementations
-        │   │   │   │   ├── alter_table.sql.j2
-        │   │   │   │   └── create_table.sql.j2
-        │   │   │   └── docs  # Documentation templates for Data Contracts
-        │   │   │       └── datatable_contract_docs.md.j2
-        │   │   └── yaml_emitter.py  # Methods to emit Data Contracts as yaml
-        │   ├── __init__.py
-        │   ├── loaders  # Methods to load and instantiate DataContract objects
-        │   │   ├── __init__.py
-        │   │   ├── structtype_loader.py  # Methods to instantiate from Spark StructType
-        │   │   └── yaml_loader.py  # Methods to instantiate from yaml
-        │   ├── models  # Pydantic models and model components e.g. enums
-        │   │   ├── __init__.py
-        │   │   ├── base.py  # Pydantic Contract components
-        │   │   ├── datatable.py  # Pydantic DataTableContract models
-        │   │   └── option_types.py  # Enums
-        │   ├── type_converter.py  # Type conversions
-        │   └── validation.py  # Validation rule implementations (data)
-        └── __init__.py
+└── README.md  # You're already here - thank you for reading :-)
 ```
