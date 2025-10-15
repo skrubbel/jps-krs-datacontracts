@@ -2,15 +2,45 @@
 
 [TOC]
 
-## Usefull commands
+A library for implementing and validating data contract content.
+
+The libray contains methods to parse/load contracts in yaml format and validate the structure of the contract.
+
+The library also contains functionality to emit Spark StructTypes, Databricks SQL for Creating and altering tables from specifications in the contract and Markdown documentation of the contract content.
+
+Validation of data in Spark data frames is still a work in progress, and will be added at a later stage.
+
+## Usefull pipenv commands
+
+``` bash
+# Initial setup - this reads from pyproject.toml
+pipenv install -e ".[dev]"
+
+# Running examples
+# Uncomment the function you would like to test in demo_load_and_emit.py
+pipenv run python src/examples/demo_load_and_emit.py
+
+# Check formatting without changes
+pipenv run black --check src/
+
+# Format code
+pipenv run black src/
+
+# Sort imports
+pipenv run isort src/
+```
+
+## Usefull uv and ruff commands
 
 ``` bash
 # Sort imports
 ruff check --select I --fix
 
 # Running the demos in the tools folder (module)
-uv run -m tools.demo_load_and_emit
+uv run -m src/examples/demo_load_and_emit.py
 ```
+
+## Project structure
 
 ``` bash
 .
