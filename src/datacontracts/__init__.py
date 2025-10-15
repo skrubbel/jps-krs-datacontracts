@@ -1,13 +1,13 @@
-from .contractslib import type_converter, validation
-from .contractslib.emitters import (
+from . import type_converter, validation
+from .emitters import (
     databricks_sql_emitter,
     json_emitter,
     markdown_docs_emitter,
     spark_structtype_emitter,
     yaml_emitter,
 )
-from .contractslib.loaders import structtype_loader, yaml_loader
-from .contractslib.models import DataTableContract
+from .loaders import structtype_loader, yaml_loader
+from .models import DataTableContract
 
 __version__ = "0.9.0"
 

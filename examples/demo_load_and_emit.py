@@ -1,6 +1,5 @@
 import json
 
-
 from pyspark.sql.types import (
     DecimalType,
     FloatType,
@@ -22,7 +21,7 @@ from datacontracts import (
 )
 
 
-CONTRACTS_HOME = "./src/datacontracts/contracts/yaml"
+CONTRACTS_HOME = "examples/contracts/yaml"
 
 
 def demo_load_yaml_emit_yaml(exclude_unset_fields: bool = False) -> DataTableContract:
@@ -64,12 +63,8 @@ def demo_structtype_loader():
     # Set up the StructType or infer it from a table
     schema = StructType(
         [
-            StructField(
-                "employee_id", IntegerType(), False, {"comment": "Employee Id"}
-            ),
-            StructField(
-                "employee_name", StringType(), False, {"comment": "Employee Name"}
-            ),
+            StructField("employee_id", IntegerType(), False, {"comment": "Employee Id"}),
+            StructField("employee_name", StringType(), False, {"comment": "Employee Name"}),
             StructField(
                 "salary",
                 DecimalType(precision=10, scale=5),
@@ -105,14 +100,10 @@ def demo_databricks_sql_emitter():
     )
 
     # SQL for creating table
-    create_sql = databricks_sql_emitter.datatable_contract_to_create_table_sql(
-        contract=contract
-    )
+    create_sql = databricks_sql_emitter.datatable_contract_to_create_table_sql(contract=contract)
 
     # SQL for altering table
-    alter_sql = databricks_sql_emitter.datatable_contract_to_alter_table_sql(
-        contract=contract
-    )
+    alter_sql = databricks_sql_emitter.datatable_contract_to_alter_table_sql(contract=contract)
 
     # Display SQL output
     print(create_sql)
@@ -156,9 +147,7 @@ def demo_markdown_docs_emitter():
     )
 
     # Use the markdown_docs_emitter to get the markdown string
-    markdown_string = markdown_docs_emitter.datatable_contract_to_markdown_docs(
-        contract=contract
-    )
+    markdown_string = markdown_docs_emitter.datatable_contract_to_markdown_docs(contract=contract)
 
     # Display the output
     print(markdown_string)
@@ -178,9 +167,7 @@ def demo_spark_structtype_emitter():
     )
 
     # Get the StructType representation of the contract
-    struct = spark_structtype_emitter.datatable_contract_to_spark_schema(
-        contract=contract
-    )
+    struct = spark_structtype_emitter.datatable_contract_to_spark_schema(contract=contract)
 
     # Print the struct tree (simple structure output)
     print(struct.treeString())
