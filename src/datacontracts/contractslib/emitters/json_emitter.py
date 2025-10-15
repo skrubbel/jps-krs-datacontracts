@@ -3,9 +3,7 @@ import json
 from ..models.datatable import DataTableContract
 
 
-def datatable_contract_to_json(
-    contract: DataTableContract, exclude_unset_fields=False
-) -> str:
+def datatable_contract_to_json(contract: DataTableContract, exclude_unset_fields=False) -> str:
     """Returns the contract schema as a formatted JSON string."""
 
     return contract.model_dump_json(indent=2, exclude_unset=exclude_unset_fields)

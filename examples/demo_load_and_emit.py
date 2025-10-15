@@ -10,17 +10,19 @@ from pyspark.sql.types import (
     StructType,
 )
 
-from datacontracts.contractslib.emitters import (
+from datacontracts import (
     databricks_sql_emitter,
     json_emitter,
     markdown_docs_emitter,
     spark_structtype_emitter,
     yaml_emitter,
+    structtype_loader,
+    yaml_loader,
+    DataTableContract,
 )
-from datacontracts.contractslib.loaders import structtype_loader, yaml_loader
-from datacontracts.contractslib.models.datatable import DataTableContract
 
-CONTRACTS_HOME = "./src/datacontracts/contracts"
+
+CONTRACTS_HOME = "./src/datacontracts/contracts/yaml"
 
 
 def demo_load_yaml_emit_yaml(exclude_unset_fields: bool = False) -> DataTableContract:
