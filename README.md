@@ -18,7 +18,7 @@ pipenv install -e ".[dev]"
 
 # Running examples
 # Uncomment the function you would like to test in demo_load_and_emit.py
-pipenv run python src/examples/demo_load_and_emit.py
+pipenv run python examples/demo_load_and_emit.py
 
 # Check formatting without changes
 pipenv run black --check src/
