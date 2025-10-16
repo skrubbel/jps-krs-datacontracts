@@ -80,3 +80,27 @@ class LifecycleStatus(str, Enum):
     ACTIVE = "active"  # The object is published for use
     DEPRECATED = "deprecated"  # The object is deprecated and may be replaced
     EXPIRED = "expired"  # The object is expired and withdrawn from active use
+
+
+class CheckType(str, Enum):
+    """Types of data quality checks."""
+
+    NOT_NULL = "not_null"
+    UNIQUE = "unique"
+    ACCEPTED_VALUES = "accepted_values"
+    REGEX_MATCH = "regex_match"
+    DATE_FORMAT = "date_format"
+    RANGE = "range"
+    LENGTH = "length"
+    REFERENTIAL_INTEGRITY = "referential_integrity"
+    CUSTOM_SQL = "custom_sql"
+    ROW_COUNT = "row_count"
+    FRESHNESS = "freshness"
+
+
+class CheckSeverity(str, Enum):
+    """Severity level of check failures."""
+
+    ERROR = "error"  # Must pass
+    WARNING = "warning"  # Should pass
+    INFO = "info"  # Informational only

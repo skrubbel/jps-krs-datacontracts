@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any, Union
 
 from pydantic import (
     BaseModel,
@@ -10,11 +10,80 @@ from pydantic import (
 )
 
 from .option_types import (
+    CheckSeverity,
+    CheckType,
     DataType,
     MaterializationType,
     SensitivityLevel,
     SensitivityType,
 )
+
+
+class TableCheck(BaseModel):
+    """A data quality check at the table level."""
+
+    check_name: str = Field(..., description="Unique name for this check")
+    check_type: CheckType = Field(..., description="Type of check to perform")
+    severity: CheckSeverity = Field(
+        default=CheckSeverity.ERROR, description="Severity of check failure"
+    )
+
+    # For row count checks
+    min_row_count: Optional[int] = Field(None, description="Minimum expected row count")
+    max_row_count: Optional[int] = Field(None, description="Maximum expected row count")
+
+    # For custom SQL checks
+    sql_expression: Optional[str] = Field(
+        None, description="Custom SQL expression that should return rows violating the rule"
+    )
+
+    # For freshness checks
+    freshness_column: Optional[str] = Field(None, description="Column to check for data freshness")
+    max_age_hours: Optional[int] = Field(None, description="Maximum age of data in hours")
+
+    description: Optional[str] = Field(None, description="Description of what this check validates")
+
+    model_config = ConfigDict(use_enum_values=True)
+
+
+class ColumnCheck(BaseModel):
+    """A data quality check for a specific column."""
+
+    check_name: str = Field(..., description="Unique name for this check")
+    check_type: CheckType = Field(..., description="Type of check to perform")
+    column_name: str = Field(..., description="Column to check")
+    severity: CheckSeverity = Field(
+        default=CheckSeverity.ERROR, description="Severity of check failure"
+    )
+
+    # Optional parameters for different check types
+    accepted_values: Optional[List[Any]] = Field(
+        None, description="List of accepted values (for accepted_values check)"
+    )
+    regex_pattern: Optional[str] = Field(
+        None, description="Regex pattern to match (for regex_match check)"
+    )
+    date_format: Optional[str] = Field(
+        None, description="Expected date format string (e.g., '%Y-%m-%d')"
+    )
+    min_value: Optional[Union[int, float]] = Field(
+        None, description="Minimum acceptable value (for range check)"
+    )
+    max_value: Optional[Union[int, float]] = Field(
+        None, description="Maximum acceptable value (for range check)"
+    )
+    min_length: Optional[int] = Field(None, description="Minimum string length")
+    max_length: Optional[int] = Field(None, description="Maximum string length")
+    reference_table: Optional[str] = Field(
+        None, description="Reference table for foreign key checks"
+    )
+    reference_column: Optional[str] = Field(
+        None, description="Reference column for foreign key checks"
+    )
+
+    description: Optional[str] = Field(None, description="Description of what this check validates")
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 # Section: Data Contract Component Classes
@@ -34,23 +103,13 @@ class Column(BaseModel):
     numeric_precision: Optional[int] = Field(
         None, description="Numeric precision value for decimals", le=38
     )
-    min_value: Optional[int] = Field(
-        None, description="Minimum value of column content"
-    )
-    max_value: Optional[int] = Field(
-        None, description="Maximum value of column content"
-    )
+    min_value: Optional[int] = Field(None, description="Minimum value of column content")
+    max_value: Optional[int] = Field(None, description="Maximum value of column content")
     description: Optional[str] = Field(None, description="Description of the column")
     is_id: Optional[bool] = Field(None, description="Is this an identity column")
-    is_primary_key: Optional[bool] = Field(
-        None, description="Is the column a primary key?"
-    )
-    is_business_key: Optional[bool] = Field(
-        None, description="Is this column a business key"
-    )
-    is_foreign_key: Optional[bool] = Field(
-        None, description="Is this a foreign key column"
-    )
+    is_primary_key: Optional[bool] = Field(None, description="Is the column a primary key?")
+    is_business_key: Optional[bool] = Field(None, description="Is this column a business key")
+    is_foreign_key: Optional[bool] = Field(None, description="Is this a foreign key column")
     sensitivity_level: Optional[SensitivityLevel] = Field(
         None, description="Data sensitivity classification"
     )
@@ -131,13 +190,9 @@ class Table(BaseModel):
         None, description="Materialization Type"
     )
     description: Optional[str] = Field(None, description="Table description")
-    discovery_tags: Optional[List[str]] = Field(
-        None, description="Search tags for table discovery"
-    )
+    discovery_tags: Optional[List[str]] = Field(None, description="Search tags for table discovery")
 
-    partition_by: Optional[List[str]] = Field(
-        None, description="Columns to partition the table by"
-    )
+    partition_by: Optional[List[str]] = Field(None, description="Columns to partition the table by")
     change_track_columns: Optional[List[str]] = Field(
         None, description="Columns to track for SCD changes"
     )
@@ -151,9 +206,7 @@ class Table(BaseModel):
     @property
     def sensitive_columns(self) -> List[str]:
         return [
-            column.column_name
-            for column in self.columns
-            if column.sensitivity_type is not None
+            column.column_name for column in self.columns if column.sensitivity_type is not None
         ]
 
     @computed_field(description="Discovery tags as a comma separated string")
